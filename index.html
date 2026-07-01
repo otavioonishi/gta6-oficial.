@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔥 GTA 6 — LANÇAMENTO EXCLUSIVO | Aproveite Agora!</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+        }
+
+        /* ─── TOAST ─── */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: #22c55e;
+            color: #0b0e14;
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 8px 30px rgba(34,197,94,0.35);
+            transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+            z-index: 999;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ─── CONTAINER ─── */
+        .container {
+            width: 100%;
+            max-width: 750px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        /* ─── URGENCY BAR ─── */
+        .urgency-bar {
+            background: linear-gradient(90deg, #ef4444, #f97316);
+            padding: 12px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            border-radius: 12px 12px 0 0;
+            animation: pulse-red 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        .urgency-bar span {
+            display: inline-block;
+            margin: 0 4px;
+        }
+
+        /* ─── CARD PRINCIPAL ─── */
+        .card {
+            background: #0f1419;
+            border: 2px solid #1e2535;
+            border-radius: 0 0 24px 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        /* ─── GAME COVER ─── */
+        .game-cover {
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, #1a2340 0%, #0f1a30 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-cover::before {
+            content: '';
+            position: absolute;
+            top: -50%; right: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(74,222,128,0.15) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .game-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        .placeholder-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            color: #475569;
+            cursor: pointer;
+            z-index: 1;
+        }
+
+        .placeholder-fallback svg {
+            width: 80px;
+            height: 80px;
+        }
+
+        /* ─── CONTENT ─── */
+        .card-content {
+            padding: 28px 24px;
+        }
+
+        /* ─── HEADLINE PRINCIPAL ─── */
+        .main-headline {
+            font-size: 1.95rem;
+            font-weight: 900;
+            color: #f1f5f9;
+            line-height: 1.2;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        .main-headline .highlight {
+            color: #4ade80;
+            display: block;
+        }
+
+        /* ─── SUBHEADLINE ─── */
+        .subheadline {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        /* ─── URGENCY SECTION ─── */
+        .urgency-section {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+            color: #fca5a5;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .urgency-section .icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* ─── PRICE SECTION ─── */
+        .price-section {
+            background: linear-gradient(135deg, rgba(74,222,128,0.15), rgba(34,197,94,0.08));
+            border: 2px solid #4ade80;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .price-label {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .price-old {
+            font-size: 1rem;
+            color: #64748b;
+            text-decoration: line-through;
+        }
+
+        .price-new {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #4ade80;
+        }
+
+        .price-discount {
+            background: #ef4444;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .price-info {
+            font-size: 0.82rem;
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        /* ─── BENEFITS ─── */
+        .benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.95rem;
+            color: #e2e8f0;
+        }
+
+        .benefit-item .icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .benefit-item strong {
+            color: #4ade80;
+        }
+
+        /* ─── CTA BUTTON ─── */
+        .btn-buy {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: #0b0e14;
+            font-size: 1.15rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            box-shadow: 0 8px 20px rgba(74,222,128,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-buy:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(74,222,128,0.4);
+        }
+
+        .btn-buy:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #4ade80;
+            background: transparent;
+            border-radius: 10px;
+            color: #4ade80;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(74,222,128,0.1);
+        }
+
+        /* ─── SOCIAL PROOF ─── */
+        .social-proof {
+            background: #0f1319;
+            border: 1px solid #1e2535;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .social-proof-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .social-proof-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .social-proof-item .highlight {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        /* ─── REVIEWS ─── */
+        .reviews {
+            background: #0f1319;
+            border: 1px solid #1e2535;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .reviews-title {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .review-item {
+            background: rgba(74,222,128,0.05);
+            border-left: 3px solid #4ade80;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+
+        .review-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: #4ade80;
+            margin-bottom: 4px;
+        }
+
+        .review-stars {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        /* ─── GUARANTEE ─── */
+        .guarantee {
+            background: rgba(74,222,128,0.08);
+            border: 1px solid rgba(74,222,128,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .guarantee-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 6px;
+        }
+
+        .guarantee-text {
+            font-size: 0.82rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+
+        /* ─── SECURITY ─── */
+        .security-badges {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-top: 1px solid #1e2535;
+            flex-wrap: wrap;
+        }
+
+        .security-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        .security-badge .icon {
+            font-size: 1.3rem;
+        }
+
+        /* ─── RESPONSIVIDADE ─── */
+        @media (max-width: 600px) {
+            .main-headline {
+                font-size: 1.6rem;
+            }
+
+            .game-cover {
+                height: 320px;
+            }
+
+            .card-content {
+                padding: 20px 16px;
+            }
+
+            .price-new {
+                font-size: 1.8rem;
+            }
+
+            .btn-buy {
+                padding: 16px;
+                font-size: 1rem;
+            }
+
+            .benefits {
+                gap: 8px;
+            }
+
+            .benefit-item {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px 8px;
+            }
+
+            .urgency-bar {
+                font-size: 0.8rem;
+                padding: 10px;
+            }
+
+            .main-headline {
+                font-size: 1.4rem;
+            }
+
+            .subheadline {
+                font-size: 0.95rem;
+            }
+
+            .game-cover {
+                height: 260px;
+            }
+
+            .card-content {
+                padding: 16px 12px;
+            }
+
+            .price-new {
+                font-size: 1.6rem;
+            }
+
+            .price-old {
+                font-size: 0.9rem;
+            }
+
+            .btn-buy {
+                padding: 14px;
+                font-size: 0.95rem;
+            }
+
+            .benefit-item {
+                font-size: 0.85rem;
+            }
+
+            .security-badges {
+                gap: 10px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .main-headline {
+                font-size: 1.2rem;
+            }
+
+            .game-cover {
+                height: 220px;
+            }
+
+            .price-new {
+                font-size: 1.4rem;
+            }
+
+            .btn-buy {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">✅ Redirecionando...</div>
+
+    <!-- Container Principal -->
+    <div class="container">
+
+        <!-- Urgency Bar -->
+        <div class="urgency-bar">
+            ⏰ <span>OFERTA VÁLIDA POR:</span> <span id="countdown">23:45:32</span> <span>| APENAS 12 CÓPIAS RESTANTES!</span>
+        </div>
+
+        <!-- Card Principal -->
+        <main class="card" role="main">
+
+            <!-- Game Cover -->
+            <div class="game-cover" id="gameCover">
+                <img
+                    src="img/fotogta6.PNG"
+                    alt="Grand Theft Auto VI"
+                    id="coverImage"
+                    style="display: none;"
+                />
+                <div class="placeholder-fallback" id="placeholderFallback">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="card-content">
+
+                <!-- Headline Principal -->
+                <h1 class="main-headline">
+                    Não Perca O Jogo
+                    <span class="highlight">MAIS ESPERADO DO ANO</span>
+                </h1>
+
+                <!-- Subheadline -->
+                <p class="subheadline">
+                    Grand Theft Auto VI chega com tudo. Explore Liberty City como nunca antes. Compre agora e ganhe acesso exclusivo ao pré-download.
+                </p>
+
+                <!-- Urgency Section -->
+                <div class="urgency-section">
+                    <span class="icon">🔥</span>
+                    <span><strong>ATENÇÃO:</strong> Apenas 12 cópias disponíveis neste preço! Após isso, o preço volta a R$ 349,90</span>
+                </div>
+
+                <!-- Price Section -->
+                <div class="price-section">
+                    <div class="price-label">Preço Especial de Lançamento</div>
+                    <div class="price-row">
+                        <span class="price-old">R$ 349,90</span>
+                        <span class="price-new">R$ 199,90</span>
+                        <span class="price-discount">−43%</span>
+                    </div>
+                    <div class="price-info">💰 Economize R$ 150,00 AGORA!</div>
+                </div>
+
+                <!-- Primary CTA -->
+                <button class="btn-buy" id="buyButton" onclick="goToPayment()">
+                    🎮 SIM! QUERO COMPRAR AGORA
+                </button>
+
+                <!-- Secondary CTA -->
+                <button class="btn-secondary" onclick="alert('Assista o trailer em: https://www.youtube.com/watch?v=...')">
+                    ▶️ Ver Trailer Oficial
+                </button>
+
+                <!-- Benefits -->
+                <div class="benefits">
+                    <div class="benefit-item">
+                        <span class="icon">✅</span>
+                        <span><strong>Acesso Imediato</strong> — Baixe assim que confirmar o pagamento</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="icon">🎁</span>
+                        <span><strong>Bônus Exclusivo</strong> — R$ 500.000 em dinheiro do jogo (valor: R$ 50)</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="icon">🔄</span>
+                        <span><strong>Compatibilidade Total</strong> — PS5, Xbox Series X|S, PC</span>
+                    </div>
+                    <div class="benefit-item">
+                        <span class="icon">🛡️</span>
+                        <span><strong>Garantia 100%</strong> — Reembolso total em 7 dias se não gostar</span>
+                    </div>
+                </div>
+
+                <!-- Social Proof -->
+                <div class="social-proof">
+                    <div class="social-proof-item">
+                        <span class="highlight">4.9/5 ⭐</span> — Avaliação média de <span class="highlight">2.847 clientes</span>
+                    </div>
+                    <div class="social-proof-item">
+                        <span class="highlight">98% de satisfação</span> — Clientes que recomendariam
+                    </div>
+                    <div class="social-proof-item">
+                        <span class="highlight">15.342 cópias vendidas</span> — Em apenas 3 semanas
+                    </div>
+                </div>
+
+                <!-- Reviews -->
+                <div class="reviews">
+                    <div class="reviews-title">O Que Dizem Nossos Clientes</div>
+                    
+                    <div class="review-item">
+                        <div class="review-author">👤 Carlos M. — São Paulo</div>
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <div>"Melhor jogo que já joguei! A qualidade gráfica é insana. Recomendo demais!"</div>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="review-author">👤 Ana S. — Rio de Janeiro</div>
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <div>"Comprei e não me arrependo! O gameplay é viciante. Vale cada centavo!"</div>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="review-author">👤 Pedro L. — Belo Horizonte</div>
+                        <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                        <div>"Entrega rápida, jogo funciona perfeitamente. Muito satisfeito com a compra!"</div>
+                    </div>
+                </div>
+
+                <!-- Guarantee -->
+                <div class="guarantee">
+                    <div class="guarantee-title">🛡️ GARANTIA 100% SATISFAÇÃO</div>
+                    <div class="guarantee-text">
+                        Não gostou? Devolvemos seu dinheiro em até 7 dias, sem perguntas. Sua satisfação é nossa prioridade!
+                    </div>
+                </div>
+
+                <!-- Final CTA -->
+                <button class="btn-buy" id="buyButton2" onclick="goToPayment()">
+                    ✅ COMPRAR AGORA POR R$ 199,90
+                </button>
+
+            </div>
+
+            <!-- Security Badges -->
+            <div class="security-badges">
+                <div class="security-badge">
+                    <span class="icon">🔒</span>
+                    <span>SSL 256-bit</span>
+                </div>
+                <div class="security-badge">
+                    <span class="icon">✅</span>
+                    <span>Compra Garantida</span>
+                </div>
+                <div class="security-badge">
+                    <span class="icon">🛡️</span>
+                    <span>Dados Seguros</span>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // ─── COUNTDOWN ───
+        function startCountdown() {
+            let hours = 23;
+            let minutes = 45;
+            let seconds = 32;
+
+            setInterval(() => {
+                if (seconds === 0) {
+                    if (minutes === 0) {
+                        if (hours === 0) {
+                            hours = 23;
+                            minutes = 59;
+                            seconds = 59;
+                        } else {
+                            hours--;
+                            minutes = 59;
+                            seconds = 59;
+                        }
+                    } else {
+                        minutes--;
+                        seconds = 59;
+                    }
+                } else {
+                    seconds--;
+                }
+
+                const h = String(hours).padStart(2, '0');
+                const m = String(minutes).padStart(2, '0');
+                const s = String(seconds).padStart(2, '0');
+                document.getElementById('countdown').textContent = `${h}:${m}:${s}`;
+            }, 1000);
+        }
+
+        // ─── IMAGEM ───
+        const coverImage = document.getElementById('coverImage');
+        const placeholderFallback = document.getElementById('placeholderFallback');
+
+        coverImage.onload = function() {
+            coverImage.style.display = 'block';
+            placeholderFallback.style.display = 'none';
+        };
+
+        coverImage.onerror = function() {
+            coverImage.style.display = 'none';
+            placeholderFallback.style.display = 'flex';
+        };
+
+        if (coverImage.complete) {
+            if (coverImage.naturalHeight === 0) {
+                coverImage.style.display = 'none';
+                placeholderFallback.style.display = 'flex';
+            } else {
+                coverImage.style.display = 'block';
+                placeholderFallback.style.display = 'none';
+            }
+        }
+
+        // ─── COMPRAR ───
+        function goToPayment() {
+            const toast = document.getElementById('toast');
+            toast.textContent = '🎮 Redirecionando para pagamento seguro...';
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                window.location.href = 'pagamento.html';
+            }, 1000);
+        }
+
+        // Iniciar countdown
+        startCountdown();
+    </script>
+
+</body>
+</html>

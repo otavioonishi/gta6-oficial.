@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pagamento — GTA 6</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e2e8f0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 16px;
+        }
+
+        .page-header { text-align: center; margin-bottom: 24px; width: 100%; max-width: 600px; }
+        .page-header .back-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: #4ade80; text-decoration: none; font-size: 0.9rem;
+            font-weight: 600; margin-bottom: 12px; transition: opacity 0.2s;
+        }
+        .page-header .back-link:hover { opacity: 0.8; }
+        .page-header h1 { font-size: 2rem; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+        .page-header p { font-size: 0.95rem; color: #94a3b8; }
+
+        .payment-container {
+            background: #0f1419; border: 1px solid #1e2535; border-radius: 24px;
+            width: 100%; max-width: 600px; overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .product-banner {
+            width: 100%; height: 280px;
+            background: linear-gradient(135deg, #1a2340 0%, #0f1a30 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 5rem; position: relative; overflow: hidden;
+        }
+        .product-banner::before {
+            content: ''; position: absolute; top: -50%; right: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(74,222,128,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .product-banner img { width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+
+        .product-info { padding: 20px 24px; background: #0f1419; border-bottom: 1px solid #1e2535; }
+        .product-info .title { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; margin-bottom: 4px; }
+        .product-info .edition { font-size: 0.85rem; color: #64748b; margin-bottom: 12px; }
+        .product-info .pricing { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .product-info .old-price { font-size: 0.9rem; color: #475569; text-decoration: line-through; }
+        .product-info .current-price { font-size: 1.8rem; font-weight: 700; color: #4ade80; }
+        .product-info .discount {
+            background: rgba(74,222,128,0.15); color: #4ade80;
+            padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700;
+        }
+        .product-info .security { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: #4ade80; margin-top: 8px; }
+
+        .payment-methods {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            border-bottom: 1px solid #1e2535;
+        }
+        .method-btn {
+            padding: 16px 12px; background: none; border: none;
+            border-bottom: 3px solid transparent; color: #64748b;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            transition: all 0.2s;
+        }
+        .method-btn:hover:not(:disabled) { color: #94a3b8; background: rgba(74,222,128,0.03); }
+        .method-btn.active { color: #4ade80; border-bottom-color: #4ade80; background: rgba(74,222,128,0.08); }
+        .method-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .method-btn .icon { font-size: 1.4rem; }
+        .badge-em-breve {
+            font-size: 0.6rem; color: #fbbf24;
+            background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.2);
+            padding: 2px 6px; border-radius: 10px; font-weight: 700;
+        }
+
+        .payment-content { display: none; padding: 24px; min-height: 400px; }
+        .payment-content.active { display: block; animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .field-group { margin-bottom: 16px; }
+        .field-group label { display: block; font-size: 0.78rem; color: #94a3b8; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .field-group input, .field-group select {
+            width: 100%; background: #0f1319; border: 1px solid #1e2535;
+            border-radius: 10px; padding: 12px 14px; color: #f1f5f9;
+            font-size: 0.95rem; outline: none; transition: border-color 0.2s;
+        }
+        .field-group input::placeholder { color: #334155; }
+        .field-group input:focus, .field-group select:focus { border-color: #4ade80; box-shadow: 0 0 0 3px rgba(74,222,128,0.08); }
+        .field-group select { appearance: none; cursor: pointer; }
+        .field-group select option { background: #141820; }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* ─── PIX ─── */
+        .pix-content { text-align: center; }
+        .pix-title { font-size: 1.3rem; font-weight: 700; color: #f1f5f9; margin-bottom: 8px; }
+        .pix-subtitle { font-size: 0.9rem; color: #94a3b8; margin-bottom: 12px; }
+        .pix-benefits { display: flex; justify-content: center; gap: 16px; margin-bottom: 20px; font-size: 0.82rem; color: #4ade80; }
+        .pix-benefits span { display: flex; align-items: center; gap: 4px; }
+        .pix-form { text-align: left; margin-bottom: 20px; }
+        .pix-form .field-group label { color: #94a3b8; }
+
+        .qrcode-box {
+            background: #fff; border-radius: 16px; padding: 16px;
+            display: inline-block; margin-bottom: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+        .qrcode-box img { display: block; width: 200px; height: 200px; border-radius: 8px; }
+
+        .qr-timer {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; font-size: 0.9rem; color: #94a3b8; margin-bottom: 16px;
+        }
+        .qr-timer .timer { color: #4ade80; font-weight: 700; font-size: 1.1rem; font-family: monospace; }
+        .qr-timer.expirando .timer { color: #f87171; }
+
+        .pix-key-box {
+            background: #0f1319; border: 1px solid #1e2535; border-radius: 10px;
+            padding: 12px 16px; display: flex; align-items: center;
+            justify-content: space-between; gap: 10px; margin-bottom: 20px;
+        }
+        .pix-key-box .key-text { font-size: 0.75rem; color: #94a3b8; font-family: monospace; word-break: break-all; flex: 1; }
+        .copy-btn {
+            background: #1e2535; border: 1px solid #4ade80; color: #4ade80;
+            border-radius: 8px; padding: 8px 16px; font-size: 0.82rem;
+            font-weight: 600; cursor: pointer; white-space: nowrap;
+            transition: all 0.2s; flex-shrink: 0;
+        }
+        .copy-btn:hover { background: #4ade80; color: #0b0e14; }
+
+        .pix-steps { text-align: left; background: #0f1319; border: 1px solid #1e2535; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+        .pix-steps .step-title { font-size: 0.82rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+        .pix-steps ol { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .pix-steps li { font-size: 0.85rem; color: #94a3b8; line-height: 1.5; }
+
+        .status-box { border-radius: 12px; padding: 14px; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; display: none; text-align: center; }
+        .status-box.aguardando { display: block; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2); color: #fbbf24; }
+        .status-box.pago { display: block; background: rgba(74,222,128,0.08); border: 1px solid rgba(74,222,128,0.2); color: #4ade80; }
+        .status-box.expirado { display: block; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); color: #f87171; }
+
+        .erro-box { background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2); color: #f87171; border-radius: 10px; padding: 12px; font-size: 0.85rem; margin-bottom: 12px; display: none; }
+
+        #pixFormArea { display: block; }
+        #pixQrArea { display: none; }
+
+        .btn-pay {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            color: #0b0e14; font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s; margin-bottom: 8px;
+        }
+        .btn-pay:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(74,222,128,0.3); }
+        .btn-pay:active { transform: translateY(0); }
+        .btn-pay:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .btn-novo {
+            width: 100%; padding: 12px; border: 1px solid #1e2535;
+            border-radius: 12px; background: transparent; color: #94a3b8;
+            font-size: 0.9rem; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; display: none; margin-bottom: 8px;
+        }
+        .btn-novo:hover { border-color: #4ade80; color: #4ade80; }
+
+        /* ─── EM BREVE (cartão/boleto) ─── */
+        .em-breve-box {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 300px; gap: 16px; text-align: center;
+        }
+        .em-breve-box .em-breve-icon { font-size: 3rem; }
+        .em-breve-box h3 { font-size: 1.2rem; font-weight: 700; color: #f1f5f9; }
+        .em-breve-box p { font-size: 0.9rem; color: #64748b; max-width: 280px; }
+
+        .security-footer { display: flex; justify-content: center; align-items: center; gap: 16px; padding: 16px 24px; border-top: 1px solid #1e2535; flex-wrap: wrap; }
+        .security-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; color: #64748b; }
+        .security-item .icon { font-size: 1.4rem; }
+
+        .toast {
+            position: fixed; top: 20px; left: 50%;
+            transform: translateX(-50%) translateY(-80px);
+            background: #22c55e; color: #0b0e14; font-weight: 700;
+            font-size: 0.9rem; padding: 12px 24px; border-radius: 30px;
+            box-shadow: 0 8px 30px rgba(34,197,94,0.35);
+            transition: transform 0.4s cubic-bezier(.34,1.56,.64,1);
+            z-index: 999; white-space: nowrap;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 480px) {
+            .page-header h1 { font-size: 1.5rem; }
+            .product-banner { height: 200px; font-size: 3rem; }
+            .product-info .current-price { font-size: 1.4rem; }
+            .method-btn { padding: 12px 8px; font-size: 0.8rem; }
+            .method-btn .icon { font-size: 1.2rem; }
+            .payment-content { padding: 16px; min-height: 350px; }
+            .row-2 { grid-template-columns: 1fr; }
+            .qrcode-box img { width: 180px; height: 180px; }
+            .pix-key-box { flex-direction: column; align-items: flex-start; }
+            .copy-btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast" id="toast">✅ Pagamento confirmado!</div>
+
+    <div class="page-header">
+        <a href="index.html" class="back-link">← Voltar para a loja</a>
+        <h1>Pagamento</h1>
+        <p>Escolha sua forma de pagamento</p>
+    </div>
+
+    <div class="payment-container">
+
+        <div class="product-banner">
+            <img src="./img/fotogta6.PNG" alt="Grand Theft Auto VI">
+        </div>
+
+        <div class="product-info">
+            <div class="title">Grand Theft Auto VI</div>
+            <div class="edition">Edição Padrão • PS5 / Xbox Series X|S</div>
+            <div class="pricing">
+                <span class="old-price">R$ 349,90</span>
+                <span class="current-price">R$ 199,90</span>
+                <span class="discount">43% OFF</span>
+            </div>
+            <div class="security"><span>✅ Compra 100% segura</span></div>
+        </div>
+
+        <!-- Métodos de pagamento -->
+        <div class="payment-methods">
+            <!-- Cartão desabilitado -->
+            <button class="method-btn" disabled>
+                <span class="icon">💳</span>
+                <span>Cartão</span>
+                <span class="badge-em-breve">Em breve</span>
+            </button>
+            <!-- PIX ativo por padrão -->
+            <button class="method-btn active" onclick="switchPayment('pix', this)">
+                <span class="icon">⚡</span>
+                <span>PIX</span>
+            </button>
+            <!-- Boleto desabilitado -->
+            <button class="method-btn" disabled>
+                <span class="icon">📋</span>
+                <span>Boleto</span>
+                <span class="badge-em-breve">Em breve</span>
+            </button>
+        </div>
+
+        <!-- ─── PIX (único ativo) ─── -->
+        <div class="payment-content active" id="payment-pix">
+            <div class="pix-content">
+                <div class="pix-title">Pague com PIX</div>
+                <div class="pix-subtitle">Aprovação imediata • Disponível 24h</div>
+                <div class="pix-benefits">
+                    <span>✅ Instantâneo</span>
+                    <span>✅ Seguro</span>
+                    <span>✅ Sem taxas</span>
+                </div>
+
+                <!-- STEP 1: Formulário -->
+                <div id="pixFormArea">
+                    <div class="pix-form">
+                        <div class="field-group">
+                            <label>Seu Nome Completo</label>
+                            <input type="text" id="inputNome" placeholder="João da Silva" />
+                        </div>
+                        <div class="field-group">
+                            <label>CPF (só números)</label>
+                            <input type="text" id="inputCpf" placeholder="12345678909" maxlength="11" />
+                        </div>
+                        <div class="field-group">
+                            <label>E-mail</label>
+                            <input type="email" id="inputEmail" placeholder="seuemail@gmail.com" />
+                        </div>
+                        <div class="field-group">
+                            <label>Telefone</label>
+                            <input type="tel" id="inputTelefone" maxlength="11" inputmode="numeric"
+                                placeholder="11999999999"
+                                oninput="this.value=this.value.replace(/\D/g,'').slice(0,11)" />
+                        </div>
+                    </div>
+                    <div class="erro-box" id="erroBox"></div>
+                    <button class="btn-pay" id="btnGerar" onclick="gerarPix()">
+                        ⚡ Gerar PIX — R$ 199,90
+                    </button>
+                </div>
+
+                <!-- STEP 2: QR Code -->
+                <div id="pixQrArea">
+                    <div class="qr-timer" id="timerBox">
+                        ⏱️ PIX expira em <span class="timer" id="timerDisplay">30:00</span>
+                    </div>
+                    <div class="qrcode-box">
+                        <img id="qrCodeImg" src="" alt="QR Code PIX" />
+                    </div>
+                    <div class="pix-key-box">
+                        <span class="key-text" id="pixKeyText">—</span>
+                        <button class="copy-btn" id="copyBtn" onclick="copiarPix()">📋 Copiar</button>
+                    </div>
+                    <div class="pix-steps">
+                        <div class="step-title"><span>📱</span><span>Como pagar</span></div>
+                        <ol>
+                            <li>Abra o app do seu banco</li>
+                            <li>Escolha pagar com PIX</li>
+                            <li>Escaneie o QR Code ou cole a chave</li>
+                            <li>Confirme o pagamento de <strong style="color:#4ade80">R$ 199,90</strong></li>
+                        </ol>
+                    </div>
+                    <div class="status-box aguardando" id="statusBox">🕐 Aguardando pagamento...</div>
+                    <button class="btn-novo" id="btnNovo" onclick="voltarForm()">🔄 Gerar novo PIX</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="security-footer">
+            <div class="security-item"><span class="icon">🔒</span><span>SSL 256-bit</span></div>
+            <div class="security-item"><span class="icon">🛡️</span><span>Dados Seguros</span></div>
+            <div class="security-item"><span class="icon">✅</span><span>Compra Garantida</span></div>
+        </div>
+
+    </div>
+
+    <script>
+        let timerInterval = null;
+        let verificarInterval = null;
+        let transacaoId = null;
+
+        function switchPayment(method, btn) {
+            document.querySelectorAll('.method-btn:not(:disabled)').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.payment-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('payment-' + method).classList.add('active');
+        }
+
+        async function gerarPix() {
+            const nome     = document.getElementById('inputNome').value.trim();
+            const cpf      = document.getElementById('inputCpf').value.replace(/\D/g, '');
+            const email    = document.getElementById('inputEmail').value.trim();
+            const telefone = document.getElementById('inputTelefone').value.replace(/\D/g, '');
+            const btn      = document.getElementById('btnGerar');
+
+            document.getElementById('erroBox').style.display = 'none';
+
+            if (!nome)                  { mostrarErro('Digite seu nome completo.'); return; }
+            if (cpf.length !== 11)      { mostrarErro('CPF inválido. Digite 11 números.'); return; }
+            if (!email)                 { mostrarErro('Digite seu e-mail.'); return; }
+            if (telefone.length !== 11) { mostrarErro('Telefone inválido. Digite 11 números com DDD.'); return; }
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Gerando PIX...';
+
+            try {
+                const res = await fetch('/criar-pix', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome, cpf, email, telefone, valor: 199.90 })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    mostrarErro(data.erro || 'Erro ao gerar PIX. Tente novamente.');
+                    btn.disabled = false;
+                    btn.textContent = '⚡ Gerar PIX — R$ 199,90';
+                    return;
+                }
+
+                transacaoId = data.transactionId;
+                document.getElementById('qrCodeImg').src = data.qrCode;
+                document.getElementById('pixKeyText').textContent = data.qrCodeText;
+                document.getElementById('pixFormArea').style.display = 'none';
+                document.getElementById('pixQrArea').style.display = 'block';
+                iniciarTimer(30 * 60);
+                iniciarVerificacao();
+
+            } catch (err) {
+                mostrarErro('Erro de conexão com o servidor.');
+                btn.disabled = false;
+                btn.textContent = '⚡ Gerar PIX — R$ 199,90';
+            }
+        }
+
+        function iniciarTimer(segundos) {
+            clearInterval(timerInterval);
+            let restante = segundos;
+            const display = document.getElementById('timerDisplay');
+            const box = document.getElementById('timerBox');
+            timerInterval = setInterval(() => {
+                restante--;
+                const m = String(Math.floor(restante / 60)).padStart(2, '0');
+                const s = String(restante % 60).padStart(2, '0');
+                display.textContent = `${m}:${s}`;
+                if (restante <= 300) box.classList.add('expirando');
+                if (restante <= 0) {
+                    clearInterval(timerInterval);
+                    clearInterval(verificarInterval);
+                    pixExpirado();
+                }
+            }, 1000);
+        }
+
+        function iniciarVerificacao() {
+            clearInterval(verificarInterval);
+            verificarInterval = setInterval(async () => {
+                if (!transacaoId) return;
+                try {
+                    const res = await fetch(`/verificar-pix/${transacaoId}`);
+                    const data = await res.json();
+                    if (data.pago) {
+                        clearInterval(verificarInterval);
+                        clearInterval(timerInterval);
+                        pixPago();
+                    }
+                } catch(e) {}
+            }, 5000);
+        }
+
+        function pixPago() {
+            const status = document.getElementById('statusBox');
+            status.className = 'status-box pago';
+            status.textContent = '✅ Pagamento confirmado! Seu pedido foi realizado com sucesso!';
+            document.getElementById('timerBox').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'none';
+            mostrarToast('✅ PIX confirmado! Pedido realizado!');
+        }
+
+        function pixExpirado() {
+            const status = document.getElementById('statusBox');
+            status.className = 'status-box expirado';
+            status.textContent = '❌ PIX expirado. Gere um novo para continuar.';
+            document.getElementById('timerBox').style.display = 'none';
+            document.getElementById('btnNovo').style.display = 'block';
+        }
+
+        function voltarForm() {
+            clearInterval(timerInterval);
+            clearInterval(verificarInterval);
+            transacaoId = null;
+            document.getElementById('pixQrArea').style.display = 'none';
+            document.getElementById('pixFormArea').style.display = 'block';
+            document.getElementById('btnGerar').disabled = false;
+            document.getElementById('btnGerar').textContent = '⚡ Gerar PIX — R$ 199,90';
+            document.getElementById('statusBox').className = 'status-box aguardando';
+            document.getElementById('statusBox').textContent = '🕐 Aguardando pagamento...';
+            document.getElementById('timerBox').style.display = 'flex';
+            document.getElementById('timerBox').classList.remove('expirando');
+            document.getElementById('btnNovo').style.display = 'none';
+            document.getElementById('copyBtn').style.display = 'block';
+            document.getElementById('erroBox').style.display = 'none';
+        }
+
+        function copiarPix() {
+            const key = document.getElementById('pixKeyText').textContent;
+            navigator.clipboard.writeText(key).then(() => {
+                const btn = document.getElementById('copyBtn');
+                btn.textContent = '✅ Copiado!';
+                setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+            });
+        }
+
+        function mostrarErro(msg) {
+            const box = document.getElementById('erroBox');
+            box.textContent = '⚠️ ' + msg;
+            box.style.display = 'block';
+        }
+
+        function mostrarToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+
+</body>
+</html>

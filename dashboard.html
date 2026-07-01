@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard — GTA 6 Loja</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #0b0e14; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; padding: 24px 16px; }
+
+        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; flex-wrap: wrap; gap: 12px; }
+        .header h1 { font-size: 1.6rem; font-weight: 700; color: #f1f5f9; }
+        .header p { font-size: 0.85rem; color: #64748b; margin-top: 2px; }
+        .btn-refresh { background: #1e2535; border: 1px solid #2d3a52; color: #4ade80; border-radius: 10px; padding: 10px 18px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-refresh:hover { background: #2d3a52; }
+
+        /* ─── CARDS RESUMO ─── */
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: #141820; border: 1px solid #1e2535; border-radius: 16px; padding: 20px; }
+        .stat-card .label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .stat-card .value { font-size: 1.8rem; font-weight: 700; color: #f1f5f9; }
+        .stat-card .value.green { color: #4ade80; }
+        .stat-card .value.yellow { color: #fbbf24; }
+        .stat-card .value.blue { color: #60a5fa; }
+
+        /* ─── TABELA ─── */
+        .table-wrap { background: #141820; border: 1px solid #1e2535; border-radius: 16px; overflow: hidden; }
+        .table-header { padding: 20px 24px; border-bottom: 1px solid #1e2535; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+        .table-header h2 { font-size: 1rem; font-weight: 700; color: #f1f5f9; }
+
+        .search-box { background: #0f1319; border: 1px solid #1e2535; border-radius: 8px; padding: 8px 14px; color: #f1f5f9; font-size: 0.85rem; outline: none; width: 220px; }
+        .search-box:focus { border-color: #4ade80; }
+        .search-box::placeholder { color: #334155; }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead th { padding: 12px 16px; text-align: left; font-size: 0.72rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #1e2535; background: #0f1319; }
+        tbody tr { border-bottom: 1px solid #0f1319; transition: background 0.15s; }
+        tbody tr:hover { background: #1a2030; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody td { padding: 14px 16px; font-size: 0.85rem; color: #94a3b8; }
+        tbody td .nome { color: #f1f5f9; font-weight: 600; }
+        tbody td .cpf { font-family: monospace; font-size: 0.8rem; }
+        tbody td .valor { color: #4ade80; font-weight: 700; }
+        tbody td .id { font-family: monospace; font-size: 0.72rem; color: #475569; }
+
+        .badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+        .badge.pago { background: rgba(74,222,128,0.12); color: #4ade80; }
+        .badge.pendente { background: rgba(251,191,36,0.12); color: #fbbf24; }
+        .badge.expirado { background: rgba(248,113,113,0.12); color: #f87171; }
+
+        .empty { text-align: center; padding: 48px; color: #475569; }
+        .empty .icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+        .loading { text-align: center; padding: 48px; color: #475569; }
+
+        @media (max-width: 600px) {
+            table { font-size: 0.8rem; }
+            thead th, tbody td { padding: 10px 10px; }
+            .search-box { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h1>📊 Dashboard</h1>
+            <p>GTA 6 Loja — Pedidos em tempo real</p>
+        </div>
+        <button class="btn-refresh" onclick="carregar()">🔄 Atualizar</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="label">Total de Pedidos</div>
+            <div class="value blue" id="statTotal">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Pedidos Pagos</div>
+            <div class="value green" id="statPagos">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Pendentes</div>
+            <div class="value yellow" id="statPendentes">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="label">Total Arrecadado</div>
+            <div class="value green" id="statValor">—</div>
+        </div>
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-wrap">
+        <div class="table-header">
+            <h2>Pedidos</h2>
+            <input class="search-box" type="text" placeholder="Buscar por nome ou ID..." oninput="filtrar(this.value)" />
+        </div>
+        <div id="tableContainer">
+            <div class="loading">⏳ Carregando pedidos...</div>
+        </div>
+    </div>
+
+    <script>
+        let todosPedidos = [];
+
+        async function carregar() {
+            try {
+                const res = await fetch('/pedidos');
+                todosPedidos = await res.json();
+                renderizar(todosPedidos);
+                atualizarStats(todosPedidos);
+            } catch(e) {
+                document.getElementById('tableContainer').innerHTML = '<div class="empty"><div class="icon">❌</div><p>Erro ao carregar pedidos. Verifique o servidor.</p></div>';
+            }
+        }
+
+        function atualizarStats(pedidos) {
+            const pagos = pedidos.filter(p => p.status === 'PAGO');
+            const pendentes = pedidos.filter(p => p.status === 'PENDENTE');
+            const total = pagos.reduce((s, p) => s + (p.valor || 0), 0);
+
+            document.getElementById('statTotal').textContent = pedidos.length;
+            document.getElementById('statPagos').textContent = pagos.length;
+            document.getElementById('statPendentes').textContent = pendentes.length;
+            document.getElementById('statValor').textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+        }
+
+        function filtrar(q) {
+            const filtrado = todosPedidos.filter(p =>
+                p.nome?.toLowerCase().includes(q.toLowerCase()) ||
+                p.transaction_id?.toLowerCase().includes(q.toLowerCase())
+            );
+            renderizar(filtrado);
+        }
+
+        function renderizar(pedidos) {
+            const container = document.getElementById('tableContainer');
+
+            if (!pedidos.length) {
+                container.innerHTML = '<div class="empty"><div class="icon">📭</div><p>Nenhum pedido encontrado.</p></div>';
+                return;
+            }
+
+            const rows = pedidos.map(p => {
+                const badge = p.status === 'PAGO'
+                    ? '<span class="badge pago">✅ Pago</span>'
+                    : p.status === 'EXPIRADO'
+                    ? '<span class="badge expirado">❌ Expirado</span>'
+                    : '<span class="badge pendente">⏳ Pendente</span>';
+
+                const data = p.criado_em
+                    ? new Date(p.criado_em).toLocaleString('pt-BR')
+                    : '—';
+
+                const cpfFormatado = p.cpf
+                    ? p.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')
+                    : '—';
+
+                return `
+                    <tr>
+                        <td><span class="nome">${p.nome || '—'}</span></td>
+                        <td><span class="cpf">${cpfFormatado}</span></td>
+                        <td><span class="valor">R$ ${(p.valor || 0).toFixed(2).replace('.', ',')}</span></td>
+                        <td>${badge}</td>
+                        <td>${data}</td>
+                        <td><span class="id">${p.transaction_id || '—'}</span></td>
+                    </tr>
+                `;
+            }).join('');
+
+            container.innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Data</th>
+                            <th>ID da Transação</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        // Carrega ao abrir e atualiza a cada 30s
+        carregar();
+        setInterval(carregar, 30000);
+    </script>
+
+</body>
+</html>
